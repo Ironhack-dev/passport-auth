@@ -18,6 +18,7 @@ router.post('/signup', (req, res, next) => {
 
   if (username === '' || password === '') {
     res.render('auth/signup', { message: 'Please indicate username and password' });
+    return;
   }
 
   // User.findOne({ username:username })
