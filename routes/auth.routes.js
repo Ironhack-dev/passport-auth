@@ -60,7 +60,7 @@ router.get('/private', secure.checkLogin, (req, res, next) => {
 });
 
 router.get('/admin', secure.checkRole('ADMIN'), (req, res, next) => {
-  res.render('auth/admin', { user: req.user });
+  res.render('auth/admin');
 });
 
 router.get('/logout', (req, res, next) => {
