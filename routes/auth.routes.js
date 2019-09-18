@@ -12,9 +12,7 @@ router.get('/signup', (req, res, next) => {
 });
 
 router.post('/signup', (req, res, next) => {
-  // const { username, password } = req.body;
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password, email } = req.body;
 
   if (username === '' || password === '') {
     res.render('auth/signup', { message: 'Please indicate username and password' });
@@ -22,7 +20,7 @@ router.post('/signup', (req, res, next) => {
   }
 
   // User.findOne({ username:username })
-  User.findOne({ username })
+  User.findOne({ email })
     .then((user) => {
       if (user) {
         res.render('auth/signup', { message: 'Username already exists' });
@@ -34,6 +32,7 @@ router.post('/signup', (req, res, next) => {
 
       const newUser = new User({
         username,
+        email,
         password: hashPass,
       });
 
@@ -48,12 +47,18 @@ router.get('/login', (req, res, next) => {
   res.render('auth/login');
 });
 
-router.post('/login', passport.authenticate('local-auth', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  passReqToCallback: true,
-  failureFlash: true,
-}));
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local-auth', (error, user, message) => {
+    if (error) next(error);
+    else if (!user) next('No user');
+    else {
+      req.login(user, (error) => {
+        if (error) next(error);
+        else res.redirect('/private');
+      });
+    }
+  })(req, res, next);
+});
 
 router.get('/private', secure.checkLogin, (req, res, next) => {
   res.render('auth/private', { user: req.user });

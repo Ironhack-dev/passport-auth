@@ -10,11 +10,11 @@ const logger = require('morgan');
 const path = require('path');
 const passport = require('passport');
 const flash = require('connect-flash');
-const session = require('express-session');
 
 
 require('./configs/db.config');
 require('./configs/passport.config');
+const session = require('./configs/session.config');
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
 
@@ -26,11 +26,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({
-  secret: 'webdev',
-  resave: true,
-  saveUninitialized: true,
-}));
+app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());

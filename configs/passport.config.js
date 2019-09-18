@@ -5,31 +5,37 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-passport.serializeUser((user, cb) => {
-  cb(null, user._id);
+passport.serializeUser((user, next) => {
+  next(null, user.id);
 });
 
-passport.deserializeUser((id, cb) => {
-  User.findById(id, (err, user) => {
-    if (err) { return cb(err); }
-    cb(null, user);
-  });
+passport.deserializeUser((id, next) => {
+  User.findById(id)
+    .then(user => next(null, user))
+    .catch(next);
 });
 
-passport.use('local-auth', new LocalStrategy((username, password, next) => {
-  User.findOne({ username }, (err, user) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return next(null, false, { message: 'Incorrect username or password' });
-    }
-    if (!bcrypt.compareSync(password, user.password)) {
-      return next(null, false, { message: 'Incorrect username or password' });
-    }
 
-    return next(null, user);
-  });
+passport.use('local-auth', new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+}, (email, password, next) => {
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        next(null, false, 'Invalid email or password');
+      } else {
+        return user.checkPassword(password)
+          .then((match) => {
+            if (!match) {
+              next(null, false, 'Invalid email or password');
+            } else {
+              next(null, user);
+            }
+          });
+      }
+    })
+    .catch(error => next(error));
 }));
 
 passport.use(
