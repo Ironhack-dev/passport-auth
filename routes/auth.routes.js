@@ -59,7 +59,7 @@ router.get('/private', secure.checkLogin, (req, res, next) => {
   res.render('auth/private', { user: req.user });
 });
 
-router.get('/admin', secure.checkRole('ADMIN'), (req, res, next) => {
+router.get('/admin', (req, res, next) => {
   res.render('auth/admin');
 });
 

@@ -1,8 +1,8 @@
 const hbs = require('hbs');
 
-hbs.registerHelper('checkCondition', (user, role, options) => {
-  if (user.role === role) {
-    return options.fn(this);
+hbs.registerHelper('checkCondition', (userRole, role, options) => {
+  if (userRole === role) {
+    return options.inverse(this);
   }
-  return options.inverse(this);
+  return options.fn(this);
 });

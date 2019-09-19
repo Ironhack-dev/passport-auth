@@ -1,26 +1,25 @@
 ADMIN PAGE
 {{#if user}}
-  <div>
-    Hello ADMIN {{user.username}} 🚀
-    {{user.role}}
-    <a href="/">Index</a>
-    <a href="/logout">Logout</a>
-  </div>
-  {{#checkCondition user "ADMIN"}}
-  <div>
-    Hello ADMIN {{user.username}} 🚀
-    {{user.role}}
-    <a href="/">Index</a>
-    <a href="/logout">Logout</a>
-  </div>
-{{/if}}
-{{#checkCondition user "GUEST"}}
-  <div>
-    Hello ADMIN {{user.username}} 🚀
-    {{user.role}}
-    <a href="/">Index</a>
-    <a href="/logout">Logout</a>
-  </div>
-{{/if}}
-{{/if}}
+<div>
+  Hello ADMIN {{user.username}} 🚀
+  {{user.role}}
+  <a href="/">Index</a>
+  <a href="/logout">Logout</a>
+</div>
 
+<div {{#checkCondition user.role "ADMIN"}} hidden {{/checkCondition }}>
+  Hello ADMIN {{user.username}} 🚀
+  {{user.role}}
+  <a href="/">Index</a>
+  <a href="/logout">Logout</a>
+</div>
+
+{{#checkCondition user.role "GUEST"}}
+<div {{#checkCondition user.role "ADMIN"}} hidden {{/checkCondition }}>
+  Hello ADMIN {{user.username}} 🚀
+  {{user.role}}
+  <a href="/">Index</a>
+  <a href="/logout">Logout</a>
+</div>
+{{/checkCondition }}
+{{/if}}
